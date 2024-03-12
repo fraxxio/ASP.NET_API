@@ -11,7 +11,5 @@ namespace CineRadarAI.Api.Models
         public bool IsSuccesful { get; set; } = true;
 
         public string Message { get; set; } = string.Empty;
-
-
     }
 }

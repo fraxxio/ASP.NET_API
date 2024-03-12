@@ -15,25 +15,33 @@ namespace CineRadarAI.Api.Services.UserService
             new User(),
             new User { Id= 1, Name = "Alah" }
         };
-        public async Task<ServiceResponse<List<User>>> AddUser(User newUser)
+        private readonly IMapper _mapper;
+
+        public UserService(IMapper mapper)
         {
-            var serviceResponse = new ServiceResponse<List<User>>();
-            users.Add(newUser);
-            serviceResponse.Data = users;
+            _mapper = mapper;
+        }
+        public async Task<ServiceResponse<List<GetUserDto>>> AddUser(AddUserDto newUser)
+        {
+            var serviceResponse = new ServiceResponse<List<GetUserDto>>();
+            var user = _mapper.Map<User>(newUser);
+            user.Id = users.Max(c => c.Id) + 1;
+            users.Add(user);
+            serviceResponse.Data = users.Select(c => _mapper.Map<GetUserDto>(c)).ToList();
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<User>> GetUserById(int id)
+        public async Task<ServiceResponse<GetUserDto>> GetUserById(int id)
         {
-            var serviceResponse = new ServiceResponse<User>();
-            serviceResponse.Data = users.FirstOrDefault(u => u.Id == id);
+            var serviceResponse = new ServiceResponse<GetUserDto>();
+            serviceResponse.Data = _mapper.Map<GetUserDto>(users.FirstOrDefault(u => u.Id == id));
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<User>>> GetUsers()
+        public async Task<ServiceResponse<List<GetUserDto>>> GetUsers()
         {
-            var serviceResponse = new ServiceResponse<List<User>>();
-            serviceResponse.Data = users;
+            var serviceResponse = new ServiceResponse<List<GetUserDto>>();
+            serviceResponse.Data = users.Select(c => _mapper.Map<GetUserDto>(c)).ToList();
             return serviceResponse;
         }
     }

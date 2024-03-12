@@ -8,8 +8,8 @@ namespace CineRadarAI.Api.Services.UserService
 {
     public interface IUserService
     {
-        Task<ServiceResponse<List<User>>> GetUsers();
-        Task<ServiceResponse<User>> GetUserById(int id);
-        Task<ServiceResponse<List<User>>> AddUser(User newUser);
+        Task<ServiceResponse<List<GetUserDto>>> GetUsers();
+        Task<ServiceResponse<GetUserDto>> GetUserById(int id);
+        Task<ServiceResponse<List<GetUserDto>>> AddUser(AddUserDto newUser);
     }
 }

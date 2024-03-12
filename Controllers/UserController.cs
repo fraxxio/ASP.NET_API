@@ -13,19 +13,19 @@ namespace CineRadarAI.Api.Controllers
         private readonly IUserService _userService = userService;
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<ServiceResponse<List<User>>>> GetAllUsers()
+        public async Task<ActionResult<ServiceResponse<List<GetUserDto>>>> GetAllUsers()
         {
             return Ok(await _userService.GetUsers());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ServiceResponse<User>>> GetUserById(int id)
+        public async Task<ActionResult<ServiceResponse<GetUserDto>>> GetUserById(int id)
         {
             return Ok(await _userService.GetUserById(id));
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<List<User>>>> AddUser(User newUser)
+        public async Task<ActionResult<ServiceResponse<List<GetUserDto>>>> AddUser(AddUserDto newUser)
         {
             return Ok(await _userService.AddUser(newUser));
         }
