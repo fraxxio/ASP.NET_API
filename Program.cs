@@ -1,7 +1,12 @@
+global using CineRadarAI.Api.Services.UserService;
+global using CineRadarAI.Api.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
@@ -12,12 +17,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-
-app.MapGet("/", () =>
-{
-    return "Hello world";
-});
+app.UseAuthorization();
+app.MapControllers();
 
 app.Run();
 
