@@ -29,5 +29,19 @@ namespace CineRadarAI.Api.Controllers
         {
             return Ok(await _userService.AddUser(newUser));
         }
+
+        [HttpPut]
+        public async Task<ActionResult<ServiceResponse<List<GetUserDto>>>> UpdateUser(UpdateUserDto updatedUser)
+        {
+            var response = await _userService.UpdateUser(updatedUser);
+            return response.Data is null ? NotFound(response) : Ok(response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ServiceResponse<GetUserDto>>> DeleteUser(int id)
+        {
+            var response = await _userService.DeleteUser(id);
+            return response.Data is null ? NotFound(response) : Ok(response);
+        }
     }
 }

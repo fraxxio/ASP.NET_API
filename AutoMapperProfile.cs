@@ -11,6 +11,7 @@ namespace CineRadarAI.Api
         {
             CreateMap<User, GetUserDto>();
             CreateMap<AddUserDto, User>();
+            CreateMap<UpdateUserDto, User>();
         }
     }
 }

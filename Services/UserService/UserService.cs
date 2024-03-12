@@ -31,6 +31,26 @@ namespace CineRadarAI.Api.Services.UserService
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<List<GetUserDto>>> DeleteUser(int id)
+        {
+            var serviceResponse = new ServiceResponse<List<GetUserDto>>();
+            try
+            {
+                var user = users.FirstOrDefault(u => u.Id == id);
+                if (user is null)
+                    throw new Exception($"User with ID '{id}' is not found.");
+
+                users.Remove(user);
+                serviceResponse.Data = users.Select(c => _mapper.Map<GetUserDto>(c)).ToList();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.IsSuccesful = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponse<GetUserDto>> GetUserById(int id)
         {
             var serviceResponse = new ServiceResponse<GetUserDto>();
@@ -42,6 +62,26 @@ namespace CineRadarAI.Api.Services.UserService
         {
             var serviceResponse = new ServiceResponse<List<GetUserDto>>();
             serviceResponse.Data = users.Select(c => _mapper.Map<GetUserDto>(c)).ToList();
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetUserDto>> UpdateUser(UpdateUserDto updatedUser)
+        {
+            var serviceResponse = new ServiceResponse<GetUserDto>();
+            try
+            {
+                var user = users.FirstOrDefault(u => u.Id == updatedUser.Id);
+                if (user is null)
+                    throw new Exception($"User with ID '{updatedUser.Id}' is not found.");
+
+                _mapper.Map(updatedUser, user);
+                serviceResponse.Data = _mapper.Map<GetUserDto>(user);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.IsSuccesful = false;
+                serviceResponse.Message = ex.Message;
+            }
             return serviceResponse;
         }
     }
