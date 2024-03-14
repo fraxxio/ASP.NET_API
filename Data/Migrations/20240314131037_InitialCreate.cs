@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace CineRadarAI.Api.Migrations
+namespace CineRadarAI.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

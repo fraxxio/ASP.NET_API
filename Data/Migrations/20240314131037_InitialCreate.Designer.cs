@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace CineRadarAI.Api.Migrations
+namespace CineRadarAI.Api.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240312150213_InitialCreate")]
+    [Migration("20240314131037_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

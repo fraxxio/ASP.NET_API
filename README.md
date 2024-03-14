@@ -13,5 +13,5 @@ docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=$sa_password" -p 1433:1433 -
 
 ```bash
 sa_password = "Password"
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost; Database=cineradar; User Id=sa; Password=$sa_password; Trusted_Connection=true; TrustServerCertificate=true;"
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost; Database=cineradar; User Id=sa; Password=$sa_password; TrustServerCertificate=true;"
 ```

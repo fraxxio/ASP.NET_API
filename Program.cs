@@ -7,7 +7,8 @@ using CineRadarAI.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var constString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddSqlServer<DataContext>(connString);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -21,6 +22,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.Services.InitializeDb();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
