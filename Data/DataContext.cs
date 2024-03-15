@@ -8,7 +8,5 @@ namespace CineRadarAI.Api.Data
         }
 
         public DbSet<User> Users => Set<User>();
-
-
     }
 }

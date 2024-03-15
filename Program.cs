@@ -7,13 +7,11 @@ using CineRadarAI.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddSqlServer<DataContext>(connString);
+builder.Services.AddServices(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
-builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 

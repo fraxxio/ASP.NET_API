@@ -8,4 +8,13 @@ public static class DataExtensions
         var dbcontext = scope.ServiceProvider.GetRequiredService<DataContext>();
         dbcontext.Database.Migrate();
     }
+
+    public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connString = configuration.GetConnectionString("DefaultConnection");
+        services.AddSqlServer<DataContext>(connString)
+        .AddScoped<IUserService, UserService>();
+
+        return services;
+    }
 }

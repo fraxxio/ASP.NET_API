@@ -1,47 +1,65 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CineRadarAI.Api.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+using CineRadarAI.Api.Data;
 
 namespace CineRadarAI.Api.Services.UserService
 {
     public class UserService : IUserService
     {
-        private static readonly List<User> users = new List<User>
-        {
-            new User(),
-            new User { Id= 1, Name = "Alah" }
-        };
+
+        private readonly DataContext _dbContext;
         private readonly IMapper _mapper;
 
-        public UserService(IMapper mapper)
+        public UserService(DataContext dbContext, IMapper mapper)
         {
             _mapper = mapper;
+            _dbContext = dbContext;
         }
-        public async Task<ServiceResponse<List<GetUserDto>>> AddUser(AddUserDto newUser)
+
+        public async Task<ServiceResponse<List<GetUserDto>>> GetUsers()
         {
             var serviceResponse = new ServiceResponse<List<GetUserDto>>();
-            var user = _mapper.Map<User>(newUser);
-            user.Id = users.Max(c => c.Id) + 1;
-            users.Add(user);
-            serviceResponse.Data = users.Select(c => _mapper.Map<GetUserDto>(c)).ToList();
+            var users = await _dbContext.Users.ToListAsync();
+            serviceResponse.Data = _mapper.Map<List<GetUserDto>>(users);
+
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetUserDto>>> DeleteUser(int id)
+        public async Task<ServiceResponse<GetUserDto>> GetUserById(int id)
+        {
+            var serviceResponse = new ServiceResponse<GetUserDto>();
+            var users = await _dbContext.Users.ToListAsync();
+            serviceResponse.Data = _mapper.Map<GetUserDto>(users.FirstOrDefault(u => u.Id == id));
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<List<GetUserDto>>> AddUser(AddUserDto newUser)
         {
             var serviceResponse = new ServiceResponse<List<GetUserDto>>();
+            var users = await _dbContext.Users.ToListAsync();
+            var user = _mapper.Map<User>(newUser);
+
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+            serviceResponse.Data = _dbContext.Users
+                .Select(_mapper.Map<GetUserDto>)
+                .ToList();
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetUserDto>> UpdateUser(UpdateUserDto updatedUser)
+        {
+            var users = await _dbContext.Users.ToListAsync();
+            var serviceResponse = new ServiceResponse<GetUserDto>();
             try
             {
-                var user = users.FirstOrDefault(u => u.Id == id);
+                var user = users.FirstOrDefault(u => u.Id == updatedUser.Id);
                 if (user is null)
-                    throw new Exception($"User with ID '{id}' is not found.");
+                    throw new Exception($"User with ID '{updatedUser.Id}' is not found.");
 
-                users.Remove(user);
-                serviceResponse.Data = users.Select(c => _mapper.Map<GetUserDto>(c)).ToList();
+                _mapper.Map(updatedUser, user);
+                await _dbContext.SaveChangesAsync();
+
+                serviceResponse.Data = _mapper.Map<GetUserDto>(user);
+                serviceResponse.Message = "User deleted successfully.";
             }
             catch (Exception ex)
             {
@@ -51,31 +69,20 @@ namespace CineRadarAI.Api.Services.UserService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetUserDto>> GetUserById(int id)
+        //TODO fix not actually deleting from DB
+        public async Task<ServiceResponse<List<GetUserDto>>> DeleteUser(int id)
         {
-            var serviceResponse = new ServiceResponse<GetUserDto>();
-            serviceResponse.Data = _mapper.Map<GetUserDto>(users.FirstOrDefault(u => u.Id == id));
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<List<GetUserDto>>> GetUsers()
-        {
+            var users = await _dbContext.Users.ToListAsync();
             var serviceResponse = new ServiceResponse<List<GetUserDto>>();
-            serviceResponse.Data = users.Select(c => _mapper.Map<GetUserDto>(c)).ToList();
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<GetUserDto>> UpdateUser(UpdateUserDto updatedUser)
-        {
-            var serviceResponse = new ServiceResponse<GetUserDto>();
             try
             {
-                var user = users.FirstOrDefault(u => u.Id == updatedUser.Id);
+                var user = users.FirstOrDefault(u => u.Id == id);
                 if (user is null)
-                    throw new Exception($"User with ID '{updatedUser.Id}' is not found.");
+                    throw new Exception($"User with ID '{id}' is not found.");
 
-                _mapper.Map(updatedUser, user);
-                serviceResponse.Data = _mapper.Map<GetUserDto>(user);
+                users.Remove(user);
+                await _dbContext.SaveChangesAsync();
+                serviceResponse.Data = users.Select(_mapper.Map<GetUserDto>).ToList();
             }
             catch (Exception ex)
             {
