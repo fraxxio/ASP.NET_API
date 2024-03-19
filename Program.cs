@@ -24,6 +24,7 @@ if (app.Environment.IsDevelopment())
 app.Services.InitializeDb();
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

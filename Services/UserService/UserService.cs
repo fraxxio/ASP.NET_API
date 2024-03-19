@@ -69,20 +69,20 @@ namespace CineRadarAI.Api.Services.UserService
             return serviceResponse;
         }
 
-        //TODO fix not actually deleting from DB
         public async Task<ServiceResponse<List<GetUserDto>>> DeleteUser(int id)
         {
-            var users = await _dbContext.Users.ToListAsync();
             var serviceResponse = new ServiceResponse<List<GetUserDto>>();
             try
             {
-                var user = users.FirstOrDefault(u => u.Id == id);
-                if (user is null)
+                var user = await _dbContext.Users.FindAsync(id);
+                if (user == null)
                     throw new Exception($"User with ID '{id}' is not found.");
 
-                users.Remove(user);
+                _dbContext.Users.Remove(user);
                 await _dbContext.SaveChangesAsync();
-                serviceResponse.Data = users.Select(_mapper.Map<GetUserDto>).ToList();
+
+                var updatedUsers = await _dbContext.Users.ToListAsync();
+                serviceResponse.Data = updatedUsers.Select(_mapper.Map<GetUserDto>).ToList();
             }
             catch (Exception ex)
             {
